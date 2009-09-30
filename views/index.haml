@@ -1,0 +1,9 @@
+%html
+  %head
+    %link{:href => "stylesheet.css", :media => "screen, projection" :rel => "stylesheet", :type => "text/css"}
+  %body
+    %h1 dbplot v0.0.1
+    
+    %form{:action => "/plot", :method => 'post'}
+      %textarea#query{:name => 'query'}
+      %input{:type => 'submit'}
