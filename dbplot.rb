@@ -4,7 +4,7 @@ require 'enumerable_proxy'
 require 'readline'
 
 class DbPlot
-  attr_reader :string
+  attr_reader :string, :debug
   attr_accessor :settings
   attr_accessor :data
 
@@ -21,36 +21,46 @@ class DbPlot
     end
   end
   
-  def connection
-    @connection ||= Mysql.new *%w(host username password database).map{|x| settings[x.to_sym]}
-  end
-  
   def execute
-    if complete?
-      if @data = query(substitute)
-        puts
-        p @data
-        puts
-        @plot.plot(@data)
-      end
-      @string = nil
+    return unless complete?
+    template = %{
+      require(ggplot2);
+      require(RMySQL);
+      
+      con <- dbConnect(MySQL(), user="#{settings[:username]}",
+          password="#{settings[:password]}", dbname="#{settings[:database]}",
+          host="localhost");
+        
+        data <- dbGetQuery(con, "#{@query}")
+        
+        pdf('#{@file}', width = 11, height = 8.5);
+        
+        qplot(#{@abscissa_alias}, #{@ordinate_alias}, data=data);
+        
+        dev.off()
+      }
+    puts template if debug
+    `echo \"#{template.gsub('"', '\\"')}\" | r --no-save #{"2>&1 > /dev/null" unless debug}`
+  end
+  
+  def parse
+    name_regex = /[a-z_]+/
+    
+    if string =~ /plot (#{name_regex})(?: as (#{name_regex})) vs (#{name_regex})(?: as (#{name_regex})) from (#{name_regex})(?: into ([a-z._]+))?/i
+      @ordinate, @ordinate_alias, @abscissa, @abscissa_alias, @table, @file = $1, $2, $3, $4, $5, $6
+      @ordinate_alias ||= @ordinate
+      @abscissa_alias ||= @abscissa
+      @file ||= "out.pdf"
+      @query = %{
+        SELECT
+          #{@ordinate} AS #{@ordinate_alias},
+          #{@abscissa} AS #{@abscissa_alias}
+        FROM #{@table}
+      }.strip
+    else
+      raise "did not compute"
     end
-  end
-  
-  def query(query, args = [])
-    st = connection.prepare query
-    st.execute *args
-    data = []
-    st.each {|d| data << d }
-    data
-  rescue => e
-    puts
-    puts e.message
-    return nil
-  end
-  
-  def parse(string)
-    @string = string
+    
     return self
   end
 
@@ -58,6 +68,7 @@ class DbPlot
     return self if string.strip == ""
     @string ||= ""
     @string += " #{string}"
+    parse if complete?
     return self
   end
 
@@ -74,47 +85,20 @@ class DbPlot
   end
   
   def substitute
-    @plot = Plot.new
-    strip_comments.gsub("plot", "select")
-  end
-  
-  class Plot
-    attr_accessor :options
-    def initialize
-      @options = {:file => 'dbplot.pdf'}
-    end
-    
-    def plot(data)
-      p 'plotting'
-      template = %{
-        require(ggplot2);
-        tempdata <- data.frame(x = c(1,2), y = c(2,5));
-        pdf('#{@options[:file]}', width = 11, height = 8.5);
-        qplot(x, y, data=tempdata)
-        dev.off()
-      }
-      
-      `echo \"#{template}\" | r --no-save`
-    end
-    
-    def method_missing(method, *args)
-      raise unless method =~ /=$/
-      options[method.gsub(/=$/, '').to_sym] = args.first
-    end
   end
 end
 
 d = DbPlot.new :database => 'dbplot', :username => 'root', :password => 'password'
 
 if ARGV.join.strip.length > 0
-  d.parse_line(ARGV.join).execute
+  d.parse_line(ARGV.join + ";")
 else
   while line = Readline.readline(d.prompt, true)
     case line
     when 'exit' then exit
     when 'help' then puts "here's some help: rtfm\n\n "
     else
-      d.parse_line(line).execute
+      d.parse_line(line)
     end
   end
 end
