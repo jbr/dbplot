@@ -6,4 +6,4 @@ h2. Example
 
 @ruby dbplot.rb "plot yvar vs xvar from tablename into my.pdf"@
 
-This would generate and execute a MySQL query, pass it to R, and use ggplot2 to generate the appropriate plot.  The eventual plan is to support as much of common interactions between a database and ggplot2, including joins, faceting, grouping, coloring, summarization, different geoms, etc.
+This would generate and execute a MySQL query (@select yvar, xvar from tablename@), pass it to R, and use ggplot2 to generate the appropriate plot (@qplot(xvar, yvar, data=data.from.mysql)@) and save it to a pdf.  The eventual plan is to support as much of common interactions between a database and ggplot2, including joins, faceting, grouping, coloring, summarization, different geoms, etc.
