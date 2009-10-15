@@ -1,0 +1,9 @@
+h1. DBPlot
+
+DBPlot is some ruby glue between MySQL and R.  It generates and runs R based on a SQL-like DSL.  It is still very early in development.  The goal is to make it simpler to get common plots out of a database.  For more complex examples, there will be an export mode, which will let you save the output R source file for further editing.
+
+h2. Example
+
+@ruby dbplot.rb "plot yvar vs xvar from tablename into my.pdf"@
+
+This would generate and execute a MySQL query, pass it to R, and use ggplot2 to generate the appropriate plot.  The eventual plan is to support as much of common interactions between a database and ggplot2, including joins, faceting, grouping, coloring, summarization, different geoms, etc.
