@@ -4,11 +4,10 @@ require 'enumerable_proxy'
 require 'readline'
 
 class DbPlot
-  attr_reader :string, :debug
-  attr_accessor :settings
-  attr_accessor :data
+  attr_reader :string
+  attr_accessor :settings, :debug, :data
 
-  def initialize(options)
+  def initialize(options = {})
     @settings = {
       :host => 'localhost',
       :username => 'root',
@@ -46,19 +45,25 @@ class DbPlot
   def parse
     name_regex = /[a-z_]+/
     
-    if string =~ /plot (#{name_regex})(?: as (#{name_regex})) vs (#{name_regex})(?: as (#{name_regex})) from (#{name_regex})(?: into ([a-z._]+))?/i
+    if string =~ /plot (#{name_regex})(?: as (#{name_regex}))? vs (#{name_regex})(?: as (#{name_regex}))? from (#{name_regex})(?: into ([a-z._]+))?/i
       @ordinate, @ordinate_alias, @abscissa, @abscissa_alias, @table, @file = $1, $2, $3, $4, $5, $6
-      @ordinate_alias ||= @ordinate
-      @abscissa_alias ||= @abscissa
+
       @file ||= "out.pdf"
+
+      needed_columns = {@ordinate => @ordinate_alias, @abscissa => @abscissa_alias}
+      
+      column_string = needed_columns.map do |col, col_alias|
+        "#{col}#{" AS #{col_alias}" if col_alias}"
+      end.join(",\n")
+
       @query = %{
         SELECT
-          #{@ordinate} AS #{@ordinate_alias},
-          #{@abscissa} AS #{@abscissa_alias}
+          #{column_string}
         FROM #{@table}
       }.strip
     else
-      raise "did not compute"
+      puts "\ncould not parse:\"#{string}\"\n\n"
+      @string = nil
     end
     
     return self
@@ -88,17 +93,30 @@ class DbPlot
   end
 end
 
-d = DbPlot.new :database => 'dbplot', :username => 'root', :password => 'password'
+d = DbPlot.new
 
+begin
+  OptionParser.new do |opts|
+    opts.banner = "Usage: #{$0} [options]"
+    opts.on("-v", "--verbose", "Run verbosely") {|v| d.debug = v }
+    opts.on("-h", "--host HOST", "MySQL Host") {|h| d.settings[:host] = h }
+    opts.on("-u", "--user USER", "MySQL User") {|u| d.settings[:username] = u }
+    opts.on("-p", "--password PASSWORD", "MySQL Password") {|p| d.settings[:password] = p }
+    opts.on("-d", "--database DATABASE", "MySQL Database") {|db| d.settings[:database] = db }
+  end.parse!
+rescue => e
+  puts e.message
+  exit
+end
+ 
 if ARGV.join.strip.length > 0
   d.parse_line(ARGV.join + ";")
 else
   while line = Readline.readline(d.prompt, true)
     case line
-    when 'exit' then exit
-    when 'help' then puts "here's some help: rtfm\n\n "
-    else
-      d.parse_line(line)
+    when /^(exit|quit)$/ then exit
+    when 'help' then puts "help message goes here\n\n "
+    else d.parse_line(line)
     end
   end
 end
