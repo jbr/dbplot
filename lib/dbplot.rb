@@ -57,17 +57,21 @@ class DbPlot
   def parse
     name_regex = /[a-z_]+/
     
-    if string =~ /plot (#{name_regex})(?: as (#{name_regex}))? vs (#{name_regex})(?: as (#{name_regex}))? from (#{name_regex})(?: into ([a-z._]+))?/i
-      @ordinate, @ordinate_alias, @abscissa, @abscissa_alias, @table, @file = $1, $2, $3, $4, $5, $6
+    if string =~ /plot (#{name_regex})(?: as (#{name_regex}))? vs (#{name_regex})(?: as (#{name_regex}))? from (#{name_regex})/i
+      @ordinate, @ordinate_alias, @abscissa, @abscissa_alias, @table = $1, $2, $3, $4, $5
 
-      @file ||= "out.pdf"
-
+      @file = "out.pdf"
+      
       @needed_columns = {@ordinate => @ordinate_alias, @abscissa => @abscissa_alias}
       
       @qplot = [
         @abscissa_alias || @abscissa,
         @ordinate_alias || @ordinate
       ]
+      
+      if string =~ /into ([a-z._]+.pdf)/
+        @file = $1
+      end
       
       if string =~ /color by (#{name_regex})(?: as (#{name_regex}))?/i
         @needed_columns[$1] = $2
