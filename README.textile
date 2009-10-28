@@ -8,7 +8,7 @@ h2. Installation
 
 h2. Example
 
-<pre><code>dbplot -d dbplot -u joe -p password -q "plot yvar vs xvar from tablename"</code></pre>
+<pre><code>dbplot -d database -u username -p password -q "plot yvar vs xvar from tablename"</code></pre>
 
 This would generate and execute a MySQL query (@select yvar, xvar from tablename@), pass it to R, and use ggplot2 to generate the appropriate plot (@qplot(xvar, yvar, data=data.from.mysql)@) and save it to a pdf (by default, out.pdf).
 
