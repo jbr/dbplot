@@ -38,7 +38,7 @@ class DbPlot
       
       con <- dbConnect(MySQL(), user="#{settings[:username]}",
           password="#{settings[:password]}", dbname="#{settings[:database]}",
-          host="localhost");
+          host="#{settings[:host]}");
         
         data <- dbGetQuery(con, "#{@query}")
         
@@ -77,6 +77,17 @@ class DbPlot
         @needed_columns[$1] = $2
         @qplot << "colour = #{$2 || $1}"
       end
+      
+      if string =~ /facet by (#{name_regex})(?: as (#{name_regex}))?(?: vs (#{name_regex})(?: as (#{name_regex}))?)?/i
+        @needed_columns[$1] = $2
+        if $3
+          @needed_columns[$3] = $4
+          @qplot << "facets = #{$2 || $1}~#{$4 || $3}"
+        else
+          @qplot << "facets = ~#{$2 || $1}"
+        end
+      end
+      
     else
       puts "\ncould not parse: \"#{string}\"\n\n"
       @string = nil

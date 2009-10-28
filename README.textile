@@ -17,6 +17,7 @@ h2. Syntax
 <pre><code>
 PLOT y_variable [AS y_variable_alias] VS x_variable [AS x_variable_alias] FROM table_name
   [COLOR BY color_variable [AS color_variable_alias]]
+  [FACET BY facet_variable [AS facet_variable_alias]]
   [INTO output_filename.pdf]
 </code></pre>
 
