@@ -18,6 +18,7 @@ h2. Syntax
 PLOT y_variable [AS y_variable_alias] VS x_variable [AS x_variable_alias] FROM table_name
   [COLOR BY color_variable [AS color_variable_alias]]
   [INTO output_filename.pdf]
+</code></pre>
 
 
 h2. Project Goals:
