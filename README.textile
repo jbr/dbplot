@@ -9,7 +9,7 @@ h2. Installation
 h2. Usage
 
 <pre>
-Usage: bin/dbplot [options]
+Usage: dbplot [options]
       --help                       This message
   -v, --verbose                    Run verbosely
   -h, --host HOST                  MySQL Host
