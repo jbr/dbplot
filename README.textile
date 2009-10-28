@@ -6,11 +6,32 @@ h2. Installation
 
 <pre><code>sudo gem install dbplot</code></pre>
 
-h2. Example
+h2. Usage
+
+<pre>
+Usage: bin/dbplot [options]
+      --help                       This message
+  -v, --verbose                    Run verbosely
+  -h, --host HOST                  MySQL Host
+  -u, --user USER                  MySQL User
+  -p, --password PASSWORD          MySQL Password
+  -d, --database DATABASE          MySQL Database
+  -q, --query QUERY                dbplot query
+      --version                    Print version info and exit
+      --dry-run                    Print but do not execute. Implies -v.
+</pre>
+
+h3. Non-interactive
 
 <pre><code>dbplot -d database -u username -p password -q "plot yvar vs xvar from tablename"</code></pre>
 
 This would generate and execute a MySQL query (@select yvar, xvar from tablename@), pass it to R, and use ggplot2 to generate the appropriate plot (@qplot(xvar, yvar, data=data.from.mysql)@) and save it to a pdf (by default, out.pdf).
+
+h3. Interactive
+
+If you skip the @-q@ flag, you'll land on a dbplot prompt, which lets you execute multiple dbplot commands.
+dbplot commands can be multiple lines and will not evaluate until a line ends with a semicolon (much like the mysql command).
+Type "exit" or "quit" to get out.
 
 h2. Syntax
 
