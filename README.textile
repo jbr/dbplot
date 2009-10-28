@@ -12,6 +12,14 @@ h2. Example
 
 This would generate and execute a MySQL query (@select yvar, xvar from tablename@), pass it to R, and use ggplot2 to generate the appropriate plot (@qplot(xvar, yvar, data=data.from.mysql)@) and save it to a pdf (by default, out.pdf).
 
+h2. Syntax
+
+<pre><code>
+PLOT y_variable [AS y_variable_alias] VS x_variable [AS x_variable_alias] FROM table_name
+  [COLOR BY color_variable [AS color_variable_alias]]
+  [INTO output_filename.pdf]
+
+
 h2. Project Goals:
 
 Support as much of common interactions between a database and ggplot2, including joins, faceting, grouping, coloring, summarization, different geoms, etc.
