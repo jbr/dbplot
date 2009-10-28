@@ -13,6 +13,7 @@ begin
     gem.authors = ["Jacob Rothstein"]
     gem.bindir = "bin"
     gem.executables = %w( dbplot )
+    gem.add_dependency 'enumerable-proxy'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

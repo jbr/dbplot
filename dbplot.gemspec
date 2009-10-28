@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jacob Rothstein"]
-  s.date = %q{2009-10-27}
+  s.date = %q{2009-10-28}
   s.default_executable = %q{dbplot}
   s.description = %q{ruby glue between sql and r (ggplot2)}
   s.email = %q{github@jacobrothstein.com}
@@ -47,8 +47,11 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<enumerable-proxy>, [">= 0"])
     else
+      s.add_dependency(%q<enumerable-proxy>, [">= 0"])
     end
   else
+    s.add_dependency(%q<enumerable-proxy>, [">= 0"])
   end
 end
