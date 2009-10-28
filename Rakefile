@@ -5,14 +5,17 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "dbplot"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{dbplot provides a sql-like interface to ggplot2}
+    gem.description = %Q{ruby glue between sql and r (ggplot2)}
+    gem.require_path = 'lib'
     gem.email = "github@jacobrothstein.com"
     gem.homepage = "http://github.com/jbr/dbplot"
     gem.authors = ["Jacob Rothstein"]
-    gem.add_development_dependency "thoughtbot-shoulda"
+    gem.bindir = "bin"
+    gem.executables = %w( dbplot )
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
