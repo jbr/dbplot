@@ -52,6 +52,7 @@ class DbPlot
     unless settings[:dry_run]
       `echo \"#{template.gsub('"', '\\"')}\" | r --no-save #{"2>&1 > /dev/null" unless debug}`
     end
+    @string = nil
   end
   
   def parse

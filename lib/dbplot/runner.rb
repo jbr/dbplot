@@ -32,7 +32,7 @@ class DbPlot
           case line
           when /^(exit|quit)$/ then exit
           when 'help' then puts "help message goes here\n\n "
-          else d.parse_line(line)
+          else d.parse_line(line).execute
           end
         end
       end
