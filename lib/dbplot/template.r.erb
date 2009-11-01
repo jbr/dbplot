@@ -1,0 +1,11 @@
+require(ggplot2);
+require(RMySQL);
+
+con <- dbConnect(MySQL(), user="<%=@settings[:username]%>",
+    password="<%=@settings[:password]%>", dbname="<%=@settings[:database]%>",
+    host="<%=@settings[:host]%>");
+  
+pdf('<%=@file%>', width = <%=@settings[:width]%>, height = <%=@settings[:height]%>);
+qplot(<%=@qplot.join(", ")%>, data=dbGetQuery(con, "<%=@query%>"));
+dev.off()
+
