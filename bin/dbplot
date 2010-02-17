@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
- 
-require 'dbplot'
-require 'dbplot/runner'
+
+require File.expand_path('lib/dbplot')
+require File.expand_path('lib/dbplot/runner')
  
 DbPlot::Runner.start

@@ -23,7 +23,7 @@ class DbPlot
   end
 
   def initialize(options = {})
-    %w(host database username password).map.to_sym.each do |setting|
+    %w(host database username password).proxy(:map).to_sym.each do |setting|
       settings[setting] = options[setting] if options[setting]
     end
   end
@@ -73,6 +73,12 @@ class DbPlot
     @string =~ /;\s*$/
   end
   
+
+  def prompt
+    @string.nil? ? 'dbplot> ' : '     -> '
+  end
+
+
   private
   
   def select_string
@@ -132,10 +138,6 @@ class DbPlot
   
   def strip_comments
     @string.gsub /#.+$/, ''
-  end
-  
-  def prompt
-    @string.nil? ? 'dbplot> ' : '     -> '
   end
   
   def self.version_string
